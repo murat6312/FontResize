@@ -1,2 +1,2 @@
 # FontResize
- Modifying text size on mobile phones
+ Modifying text size on mobile apps
