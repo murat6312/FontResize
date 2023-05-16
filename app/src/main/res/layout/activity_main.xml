@@ -4,12 +4,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <Button
         android:id="@+id/increaseTextSizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:padding="4dp"
         android:text="+" />
 
@@ -18,7 +19,57 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
+        android:layout_toStartOf="@id/increaseTextSizeButton"
+        android:layout_centerVertical="true"
         android:padding="4dp"
         android:text="-" />
+
+    <Button
+        android:id="@+id/resetTextSizeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:padding="4dp"
+        android:text="Reset" />
+
+    <Button
+        android:id="@+id/twoTimesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:padding="4dp"
+        android:text="2x" />
+
+    <Button
+        android:id="@+id/threeTimesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_toEndOf="@id/twoTimesButton"
+        android:layout_alignTop="@id/twoTimesButton"
+        android:padding="4dp"
+        android:text="3x" />
+
+    <Button
+        android:id="@+id/fourTimesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_toStartOf="@id/twoTimesButton"
+        android:layout_alignTop="@id/twoTimesButton"
+        android:padding="4dp"
+        android:text="4x" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_centerInParent="true"
+        android:text="Current Size" />
 
 </RelativeLayout>

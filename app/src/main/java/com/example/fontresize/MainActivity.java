@@ -1,23 +1,30 @@
 package com.example.fontresize;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import android.preference.PreferenceManager;
 
-public class MainActivity extends Activity {
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String FONT_SIZE_KEY = "fontSize";
     private TextView textView;
     private Button increaseTextSizeButton;
     private Button decreaseTextSizeButton;
-    private float textSize;
+    private Button resetTextSizeButton;
+    private Button twoTimesButton;
+    private Button threeTimesButton;
+    private Button fourTimesButton;
+    private SharedPreferences preferences;
+
+    private void setFontScale(float fontScale) {
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontScale);
+        Settings.System.putFloat(getContentResolver(), Settings.System.FONT_SCALE, fontScale);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,65 +34,77 @@ public class MainActivity extends Activity {
         textView = findViewById(R.id.textView);
         increaseTextSizeButton = findViewById(R.id.increaseTextSizeButton);
         decreaseTextSizeButton = findViewById(R.id.decreaseTextSizeButton);
+        resetTextSizeButton = findViewById(R.id.resetTextSizeButton);
+        twoTimesButton = findViewById(R.id.twoTimesButton);
+        threeTimesButton = findViewById(R.id.threeTimesButton);
+        fourTimesButton = findViewById(R.id.fourTimesButton);
 
-        textSize = textView.getTextSize();
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(this);
 
         increaseTextSizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textSize += 2;
-                textView.setTextSize(textSize);
+                float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
+                fontSize += 0.1f;
+                preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
+                setFontScale(fontSize);
             }
         });
 
         decreaseTextSizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textSize -= 2;
-                textView.setTextSize(textSize);
+                float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
+                fontSize -= 0.1f;
+                preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
+                setFontScale(fontSize);
             }
         });
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            loadContacts();
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
-        }
-    }
-
-    private void loadContacts() {
-        StringBuilder builder = new StringBuilder();
-
-        Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                String displayName;
-
-                int columnIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-                if (columnIndex >= 0) {
-                    displayName = cursor.getString(columnIndex);
-                } else {
-                    displayName = "Unknown";
-                }
-
-                builder.append(displayName);
-                builder.append("\n");
+        resetTextSizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferences.edit().putFloat(FONT_SIZE_KEY, 1.0f).apply();
+                setFontScale(1.0f);
             }
-            cursor.close();
-        }
+        });
 
-        textView.setText(builder.toString());
+        twoTimesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferences.edit().putFloat(FONT_SIZE_KEY, 2.0f).apply();
+                setFontScale(2.0f);
+            }
+        });
+
+        threeTimesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferences.edit().putFloat(FONT_SIZE_KEY, 3.0f).apply();
+                setFontScale(3.0f);
+            }
+        });
+
+        fourTimesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                preferences.edit().putFloat(FONT_SIZE_KEY, 4.0f).apply();
+                setFontScale(4.0f);
+            }
+        });
+
+        float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
+        setFontScale(fontSize);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loadContacts();
-            } else {
-                textView.setText("Permission must be granted to display contacts");
-            }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(FONT_SIZE_KEY)) {
+            float fontSize = sharedPreferences.getFloat(FONT_SIZE_KEY, 1.0f);
+
+            setFontScale(fontSize);
+            textView.setText("Current Size: " + fontSize);
         }
     }
 }
