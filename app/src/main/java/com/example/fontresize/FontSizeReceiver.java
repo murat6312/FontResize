@@ -21,6 +21,9 @@ public class FontSizeReceiver extends BroadcastReceiver {
         switch (Objects.requireNonNull(intent.getAction())) {
             case ACTION_INCREASE_FONT:
                 fontSize += 0.2f;
+                if (fontSize > 3f) { // Prevent the font size from exceeding 3x its normal size
+                    fontSize = 3f;
+                }
                 break;
             case ACTION_DECREASE_FONT:
                 fontSize -= 0.2f;
@@ -33,4 +36,5 @@ public class FontSizeReceiver extends BroadcastReceiver {
 
         preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
     }
+
 }

@@ -45,16 +45,6 @@
         android:layout_alignParentStart="true"/>
 
     <Button
-        android:id="@+id/quadSizeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:padding="4dp"
-        android:text="4x"
-        android:layout_below="@+id/tripleSizeButton"
-        android:layout_alignParentStart="true"/>
-
-    <Button
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

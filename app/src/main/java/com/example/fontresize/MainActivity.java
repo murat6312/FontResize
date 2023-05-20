@@ -54,7 +54,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         Button decreaseTextSizeButton = findViewById(R.id.decreaseTextSizeButton);
         Button doubleSizeButton = findViewById(R.id.doubleSizeButton);
         Button tripleSizeButton = findViewById(R.id.tripleSizeButton);
-        Button quadSizeButton = findViewById(R.id.quadSizeButton);
         Button resetButton = findViewById(R.id.resetButton);
 
         preferences = getSharedPreferences("FontSizePrefs", MODE_PRIVATE);
@@ -64,7 +63,6 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         decreaseTextSizeButton.setOnClickListener(v -> decreaseFontSize());
         doubleSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 2f).apply());
         tripleSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 3f).apply());
-        quadSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 4f).apply());
         resetButton.setOnClickListener(v -> resetFontSize());
 
         // Register to receive font size changes.
@@ -73,9 +71,13 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
 
     private void increaseFontSize() {
         float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1f);
-        fontSize += 0.2f; // adjust this value to increase the speed of size change
+        fontSize += 0.2f;
+        if (fontSize > 3f) { // Prevent the font size from exceeding 3x its normal size
+            fontSize = 3f;
+        }
         preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
     }
+
 
     private void decreaseFontSize() {
         float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1f);
