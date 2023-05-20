@@ -9,67 +9,68 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:padding="4dp"
-        android:text="+" />
+        android:text="+"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"/>
 
     <Button
         android:id="@+id/decreaseTextSizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        android:layout_toStartOf="@id/increaseTextSizeButton"
-        android:layout_centerVertical="true"
         android:padding="4dp"
-        android:text="-" />
+        android:text="-"
+        android:layout_below="@+id/increaseTextSizeButton"
+        android:layout_alignParentEnd="true"/>
 
     <Button
-        android:id="@+id/resetTextSizeButton"
+        android:id="@+id/doubleSizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        android:layout_centerInParent="true"
+        android:padding="4dp"
+        android:text="2x"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:id="@+id/tripleSizeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:padding="4dp"
+        android:text="3x"
+        android:layout_below="@+id/doubleSizeButton"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:id="@+id/quadSizeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:padding="4dp"
+        android:text="4x"
+        android:layout_below="@+id/tripleSizeButton"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:padding="4dp"
+        android:text="Reset"
         android:layout_alignParentBottom="true"
-        android:padding="4dp"
-        android:text="Reset" />
-
-    <Button
-        android:id="@+id/twoTimesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="4dp"
-        android:text="2x" />
-
-    <Button
-        android:id="@+id/threeTimesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:layout_toEndOf="@id/twoTimesButton"
-        android:layout_alignTop="@id/twoTimesButton"
-        android:padding="4dp"
-        android:text="3x" />
-
-    <Button
-        android:id="@+id/fourTimesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:layout_toStartOf="@id/twoTimesButton"
-        android:layout_alignTop="@id/twoTimesButton"
-        android:padding="4dp"
-        android:text="4x" />
+        android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/sizeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        android:layout_centerInParent="true"
-        android:text="Current Size" />
+        android:padding="4dp"
+        android:text="Current Size"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

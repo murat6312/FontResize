@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Font Resize</string>
-    <string name="font_size_category">Font Size</string>
-    <string name="font_size">Font Size</string>
-    <string name="font_size_summary">Change the font size of the app</string>
-</resources>

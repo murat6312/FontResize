@@ -1,29 +1,38 @@
 package com.example.fontresize;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.preference.PreferenceManager;
+import android.net.Uri;
+import android.widget.Toast;
+import android.content.IntentFilter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.Objects;
 
 public class MainActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String FONT_SIZE_KEY = "fontSize";
+    public static final String FONT_SIZE_KEY = "fontSize";
+    public static final String ACTION_INCREASE_FONT = "action_increase_font";
+    public static final String ACTION_DECREASE_FONT = "action_decrease_font";
+    public static final String ACTION_RESET_FONT = "action_reset_font";
     private TextView textView;
-    private Button increaseTextSizeButton;
-    private Button decreaseTextSizeButton;
-    private Button resetTextSizeButton;
-    private Button twoTimesButton;
-    private Button threeTimesButton;
-    private Button fourTimesButton;
     private SharedPreferences preferences;
 
-    private void setFontScale(float fontScale) {
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontScale);
-        Settings.System.putFloat(getContentResolver(), Settings.System.FONT_SCALE, fontScale);
+    private void setFontScale() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.System.canWrite(this)) {
+            float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1f);
+            Settings.System.putFloat(getBaseContext().getContentResolver(),
+                    Settings.System.FONT_SCALE, fontSize);
+            textView.setText("Current Size: " + fontSize + "x");
+        }
     }
 
     @Override
@@ -31,80 +40,64 @@ public class MainActivity extends Activity implements SharedPreferences.OnShared
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textView);
-        increaseTextSizeButton = findViewById(R.id.increaseTextSizeButton);
-        decreaseTextSizeButton = findViewById(R.id.decreaseTextSizeButton);
-        resetTextSizeButton = findViewById(R.id.resetTextSizeButton);
-        twoTimesButton = findViewById(R.id.twoTimesButton);
-        threeTimesButton = findViewById(R.id.threeTimesButton);
-        fourTimesButton = findViewById(R.id.fourTimesButton);
+        requestWriteSettingsPermission();
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Intent intent = new Intent(this, FontSizeService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
+
+        textView = findViewById(R.id.sizeTextView);
+        Button increaseTextSizeButton = findViewById(R.id.increaseTextSizeButton);
+        Button decreaseTextSizeButton = findViewById(R.id.decreaseTextSizeButton);
+        Button doubleSizeButton = findViewById(R.id.doubleSizeButton);
+        Button tripleSizeButton = findViewById(R.id.tripleSizeButton);
+        Button quadSizeButton = findViewById(R.id.quadSizeButton);
+        Button resetButton = findViewById(R.id.resetButton);
+
+        preferences = getSharedPreferences("FontSizePrefs", MODE_PRIVATE);
         preferences.registerOnSharedPreferenceChangeListener(this);
 
-        increaseTextSizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
-                fontSize += 0.1f;
-                preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
-                setFontScale(fontSize);
-            }
-        });
+        increaseTextSizeButton.setOnClickListener(v -> increaseFontSize());
+        decreaseTextSizeButton.setOnClickListener(v -> decreaseFontSize());
+        doubleSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 2f).apply());
+        tripleSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 3f).apply());
+        quadSizeButton.setOnClickListener(v -> preferences.edit().putFloat(FONT_SIZE_KEY, 4f).apply());
+        resetButton.setOnClickListener(v -> resetFontSize());
 
-        decreaseTextSizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
-                fontSize -= 0.1f;
-                preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
-                setFontScale(fontSize);
-            }
-        });
+        // Register to receive font size changes.
+        LocalBroadcastManager.getInstance(this).registerReceiver(new FontSizeReceiver(), new IntentFilter("FontSizeChange"));
+    }
 
-        resetTextSizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                preferences.edit().putFloat(FONT_SIZE_KEY, 1.0f).apply();
-                setFontScale(1.0f);
-            }
-        });
+    private void increaseFontSize() {
+        float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1f);
+        fontSize += 0.2f; // adjust this value to increase the speed of size change
+        preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
+    }
 
-        twoTimesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                preferences.edit().putFloat(FONT_SIZE_KEY, 2.0f).apply();
-                setFontScale(2.0f);
-            }
-        });
+    private void decreaseFontSize() {
+        float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1f);
+        fontSize -= 0.2f; // adjust this value to decrease the speed of size change
+        preferences.edit().putFloat(FONT_SIZE_KEY, fontSize).apply();
+    }
 
-        threeTimesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                preferences.edit().putFloat(FONT_SIZE_KEY, 3.0f).apply();
-                setFontScale(3.0f);
-            }
-        });
-
-        fourTimesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                preferences.edit().putFloat(FONT_SIZE_KEY, 4.0f).apply();
-                setFontScale(4.0f);
-            }
-        });
-
-        float fontSize = preferences.getFloat(FONT_SIZE_KEY, 1.0f);
-        setFontScale(fontSize);
+    private void resetFontSize() {
+        preferences.edit().putFloat(FONT_SIZE_KEY, 1f).apply();
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(FONT_SIZE_KEY)) {
-            float fontSize = sharedPreferences.getFloat(FONT_SIZE_KEY, 1.0f);
+            setFontScale();
+        }
+    }
 
-            setFontScale(fontSize);
-            textView.setText("Current Size: " + fontSize);
+    private void requestWriteSettingsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 200);
         }
     }
 }
